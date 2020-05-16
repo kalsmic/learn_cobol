@@ -1,0 +1,59 @@
+       IDENTIFICATION DIVISION. 
+       PROGRAM-ID. MYSORT.
+       DATA DIVISION. 
+       WORKING-STORAGE SECTION. 
+       01  NAMES-LIST.
+           03 NAME-ENTRY     OCCURS 5 TIMES PIC A(10).
+       01  NAME-INDEX        PIC 99.
+       01  SORT-INDEX        PIC 99.
+       01  INPUT-INDEX       PIC 99.
+       01  LIST-SIZE         PIC 99 VALUE 5.
+       01  TEMPORARY         PIC A(10).
+       01  LAST-ITEM-INDEX   PIC 99.
+
+
+       PROCEDURE DIVISION .
+       BEGIN.
+           DISPLAY "NAME SORTING PROGRAM"
+           PERFORM RECEIVE-NAME-INPUT 
+           PERFORM COMPARE-AND-MOVE WITH TEST AFTER 
+                   VARYING NAME-INDEX  FROM 1 BY 1
+                   UNTIL NAME-INDEX = LIST-SIZE - 1
+           PERFORM DISPLAY-NAME-LIST 
+           GOBACK 
+           .
+
+       RECEIVE-NAME-INPUT.
+           DISPLAY "ENTER A LIST OF NAMES"
+           PERFORM WITH TEST AFTER
+                    VARYING  NAME-INDEX  FROM 1 BY 1 
+                    UNTIL NAME-INDEX = LIST-SIZE  
+              DISPLAY "NAME-" NAME-INDEX ": "   WITH NO ADVANCING 
+              ACCEPT NAME-ENTRY(NAME-INDEX)       
+           END-PERFORM
+           .
+       END-RECEIVE-NAME-INPUT.
+       
+       COMPARE-AND-MOVE.
+           COMPUTE LAST-ITEM-INDEX = LIST-SIZE - NAME-INDEX.
+           PERFORM WITH TEST AFTER  
+                 VARYING SORT-INDEX  FROM 1 BY 1
+                 UNTIL SORT-INDEX = LAST-ITEM-INDEX
+              IF NAME-ENTRY(SORT-INDEX ) > NAME-ENTRY(SORT-INDEX   + 1)
+                 MOVE NAME-ENTRY(SORT-INDEX   + 1 ) TO TEMPORARY 
+                 MOVE NAME-ENTRY(SORT-INDEX   ) TO
+                     NAME-ENTRY(SORT-INDEX   + 1)
+                 MOVE TEMPORARY TO NAME-ENTRY(SORT-INDEX   )
+              END-IF 
+           END-PERFORM.
+       END-COMPARE-AND-MOVE.
+
+       DISPLAY-NAME-LIST.
+           PERFORM WITH TEST AFTER 
+                VARYING NAME-INDEX FROM 1 BY 1
+                UNTIL NAME-INDEX = LIST-SIZE 
+              DISPLAY  NAME-INDEX ": " NAME-ENTRY(NAME-INDEX)
+           END-PERFORM.
+       END-DISPLAY-NAME-LIST.
+          
+
